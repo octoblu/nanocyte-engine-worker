@@ -4,8 +4,6 @@ MAINTAINER Octoblu, Inc. <docker@octoblu.com>
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-ADD https://meshblu.octoblu.com/publickey /usr/src/app/public-key.json
-
 COPY . /usr/src/app/
 
 # this is crazy for a reason
