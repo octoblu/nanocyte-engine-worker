@@ -4,6 +4,7 @@
   "description": "Nanocyte Engine worker Queue",
   "main": "index.js",
   "scripts": {
+    "start": "node command.js",
     "test": "istanbul cover _mocha -- -R spec"
   },
   "repository": {
@@ -25,5 +26,13 @@
     "mocha-istanbul": "^0.2.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
+  },
+  "dependencies": {
+    "@octoblu/nanocyte-engine-simple": "^2.0.17",
+    "@octoblu/redis-ns": "^0.1.1",
+    "async": "^1.5.0",
+    "commander": "^2.9.0",
+    "debug": "^2.2.0",
+    "redis": "^2.3.0"
   }
 }
