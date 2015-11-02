@@ -15,7 +15,7 @@ class QueueWorker
       engineInput = new EngineInputNode
       inputStream = engineInput.message request
 
-      inputStream.on 'finish', callback
+      inputStream.on 'end', callback
       inputStream.on 'error', callback
 
 module.exports = QueueWorker

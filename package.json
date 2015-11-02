@@ -28,11 +28,12 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
-    "@octoblu/nanocyte-engine-simple": "^2.0.17",
+    "@octoblu/nanocyte-engine-simple": "^2.0.18",
     "@octoblu/redis-ns": "^0.1.1",
     "async": "^1.5.0",
     "commander": "^2.9.0",
     "debug": "^2.2.0",
+    "lodash": "^3.10.1",
     "redis": "^2.3.0"
   }
 }
