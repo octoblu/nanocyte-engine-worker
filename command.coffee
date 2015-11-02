@@ -7,22 +7,17 @@ packageJSON  = require './package.json'
 QueueWorker      = require './src/queue-worker'
 
 class Command
-  parseList: (val) =>
-    val.split ','
-
   parseOptions: =>
     commander
       .version packageJSON.version
       .option '-n, --namespace <nanocyte-engine>', 'job handler queue namespace.', 'nanocyte-engine'
       .option '-s, --single-run', 'perform only one job.'
-      .option '-t, --timeout <n>', 'seconds to wait for a next job.', parseInt, 30
+      .option '-t, --timeout <30>', 'seconds to wait for a next job.', parseInt, 30
       .parse process.argv
 
     {@namespace,@singleRun,@timeout} = commander
-    @client = new RedisNS @namespace, redis.createClient(process.env.REDIS_URI)
 
-    @redisUri   = process.env.REDIS_URI
-    @pepper     = process.env.TOKEN
+    @client = new RedisNS @namespace, redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST)
 
   run: =>
     @parseOptions()
