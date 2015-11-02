@@ -8,7 +8,9 @@ class QueueWorker
       return callback error if error?
       return callback() unless result?
 
-      [queueName, request] = result
+      [queueName, requestStr] = result
+
+      request = JSON.parse requestStr
 
       engineInput = new EngineInputNode
       inputStream = engineInput.message request
