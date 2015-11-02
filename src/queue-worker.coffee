@@ -1,3 +1,4 @@
+debug           = require('debug')('nanocyte-engine-worker:queue-worker')
 EngineInputNode = require '@octoblu/nanocyte-engine-simple/src/models/engine-input-node'
 
 class QueueWorker
@@ -11,6 +12,7 @@ class QueueWorker
       [queueName, requestStr] = result
 
       request = JSON.parse requestStr
+      debug 'brpop', JSON.stringify request.metadata
 
       engineInput = new EngineInputNode
       inputStream = engineInput.message request

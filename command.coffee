@@ -3,7 +3,7 @@ commander   = require 'commander'
 async       = require 'async'
 redis       = require 'redis'
 RedisNS     = require '@octoblu/redis-ns'
-debug       = require('debug')('meshblu-core-dispatcher:command')
+debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
 QueueWorker = require './src/queue-worker'
 
