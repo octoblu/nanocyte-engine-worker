@@ -34,19 +34,23 @@ class Command
     if process.env.NANOCYTE_ENGINE_WORKER_TIMEOUT?
       @timeout = parseInt process.env.NANOCYTE_ENGINE_WORKER_TIMEOUT
 
-    @client = new RedisNS @namespace, redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST)
+    @redisPort = process.env.REDIS_PORT
+    @redisHost = process.env.REDIS_HOST
+
 
   run: =>
     @parseOptions()
     async.times @concurrency, @work, @die
 
   work: (i, callback) =>
-    return @queueWorkerRun callback if @singleRun
-    async.forever @queueWorkerRun, callback
+    client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
+    
+    return @queueWorkerRun client, callback if @singleRun
+    async.forever async.apply(@queueWorkerRun, client), callback
 
-  queueWorkerRun: (callback) =>
+  queueWorkerRun: (client, callback) =>
     queueWorker = new QueueWorker
-      client:    @client
+      client:    client
       timeout:   @timeout
 
     queueWorker.run (error) =>
