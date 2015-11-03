@@ -17,7 +17,13 @@ class QueueWorker
       engineInput = new EngineInputNode
       inputStream = engineInput.message request
 
-      inputStream.on 'end', callback
-      inputStream.on 'error', callback
+      inputStream.on 'data', =>
+
+      inputStream.on 'end', =>
+        debug "the worker noticed we ended"
+        callback()
+      inputStream.on 'error', =>
+        debug "the worker thought we had an error"
+        callback()
 
 module.exports = QueueWorker
