@@ -14,16 +14,12 @@ class Command
   parseOptions: =>
     commander
       .version packageJSON.version
-      .option '-c, --concurrency <1>', 'number of workers to run at a time', @parseInt, 1
       .option '-n, --namespace <nanocyte-engine>', 'job handler queue namespace.', 'nanocyte-engine'
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <30>', 'seconds to wait for a next job.', @parseInt, 30
       .parse process.argv
 
-    {@concurrency,@namespace,@singleRun,@timeout} = commander
-
-    if process.env.NANOCYTE_ENGINE_WORKER_CONCURRENCY?
-      @concurrency = parseInt process.env.NANOCYTE_ENGINE_WORKER_CONCURRENCY
+    {@namespace,@singleRun,@timeout} = commander
 
     if process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE?
       @namespace = process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE
@@ -40,13 +36,10 @@ class Command
 
   run: =>
     @parseOptions()
-    async.times @concurrency, @work, @die
-
-  work: (i, callback) =>
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
-    
-    return @queueWorkerRun client, callback if @singleRun
-    async.forever async.apply(@queueWorkerRun, client), callback
+
+    return @queueWorkerRun client, @die if @singleRun
+    async.forever async.apply(@queueWorkerRun, client), @die
 
   queueWorkerRun: (client, callback) =>
     queueWorker = new QueueWorker
