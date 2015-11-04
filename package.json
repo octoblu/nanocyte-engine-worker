@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "1.1.19",
+  "version": "1.1.20",
   "description": "Nanocyte Engine queue worker",
   "main": "index.js",
   "scripts": {
