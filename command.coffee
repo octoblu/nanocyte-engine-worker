@@ -38,8 +38,11 @@ class Command
     @parseOptions()
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
 
+    process.on 'SIGTERM', => @terminate = true
     return @queueWorkerRun client, @die if @singleRun
-    async.forever async.apply(@queueWorkerRun, client), @die
+    async.until @terminated, async.apply(@queueWorkerRun, client), @die
+
+  terminated: => @terminate
 
   queueWorkerRun: (client, callback) =>
     queueWorker = new QueueWorker
