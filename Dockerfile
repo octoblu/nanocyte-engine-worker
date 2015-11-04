@@ -14,4 +14,4 @@ RUN cd /usr/src/app/node_modules/@octoblu/nanocyte-engine-simple; npm -s run pos
 RUN npm -s install
 # end craziness
 
-CMD [ "npm", "start" ]
+CMD [ "node", "command.js" ]
