@@ -16,7 +16,7 @@ class Command
       .version packageJSON.version
       .option '-n, --namespace <nanocyte-engine>', 'job handler queue namespace.', 'nanocyte-engine'
       .option '-s, --single-run', 'perform only one job.'
-      .option '-t, --timeout <30>', 'seconds to wait for a next job.', @parseInt, 30
+      .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
       .parse process.argv
 
     {@namespace,@singleRun,@timeout} = commander
@@ -49,8 +49,13 @@ class Command
       client:    client
       timeout:   @timeout
 
+    timeout = setTimeout =>
+      @die new Error('Timeout exceeded, exiting')
+    , (@timeout * 1000 * 2)
+
     queueWorker.run (error) =>
       console.error error.stack if error?
+      clearTimeout timeout
       callback()
 
   die: (error) =>
