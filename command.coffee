@@ -16,7 +16,7 @@ class Command
       .version packageJSON.version
       .option '-n, --namespace <nanocyte-engine>', 'job handler queue namespace.', 'nanocyte-engine'
       .option '-s, --single-run', 'perform only one job.'
-      .option '-t, --timeout <15>', 'seconds to wait for a next job.', @parseInt, 15
+      .option '-t, --timeout <45>', 'seconds to wait for a next job.', @parseInt, 45
       .parse process.argv
 
     {@namespace,@singleRun,@timeout} = commander
