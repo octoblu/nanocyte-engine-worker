@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Nanocyte Engine queue worker",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
-    "@octoblu/nanocyte-engine-simple": "^v3.1.1",
+    "@octoblu/nanocyte-engine-simple": "^3.1.2",
     "@octoblu/redis-ns": "^0.1.1",
     "async": "^1.5.0",
     "commander": "^2.9.0",
