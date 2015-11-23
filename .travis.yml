@@ -4,6 +4,10 @@ node_js:
 cache:
   directories:
   - node_modules
+script:
+  - exit 0
+install:
+  - exit 0
 #addons:
 #  code_climate:
 #    repo_token: <REPO TOKEN GOES HERE>
