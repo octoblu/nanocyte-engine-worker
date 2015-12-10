@@ -50,7 +50,9 @@ class Command
       timeout:   @timeout
 
     timeout = setTimeout =>
-      @die new Error('Timeout exceeded, exiting')
+      error = new Error 'Timeout exceeded, exiting'
+      error.flowId = queueWorker.flowId
+      @die error
     , (@timeout * 1000 * 2)
 
     queueWorker.run (error) =>
@@ -63,6 +65,7 @@ class Command
 
   die: (error) =>
     return process.exit(0) unless error?
+    console.log "Error flowId: #{error.flowId}" if error.flowId?
     console.error error.stack
     process.exit 1
 

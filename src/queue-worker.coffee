@@ -14,7 +14,8 @@ class QueueWorker
       [queueName, requestStr] = result
 
       request = JSON.parse requestStr
-      debug 'brpop', JSON.stringify request.metadata
+      debug 'brpop', request.metadata
+      @flowId = request.metadata.flowId # used to output flowId in case of timeout
 
       benchmark = new Benchmark label: 'queue-worker'
       engine = new Engine
