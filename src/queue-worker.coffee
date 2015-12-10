@@ -21,7 +21,6 @@ class QueueWorker
       engine.run request, (error) =>
         debug "the worker thought we had an error", benchmark.toString() if error?
         debug "the worker noticed we ended", benchmark.toString()
-        throw error if error?
-        callback()
+        callback error
 
 module.exports = QueueWorker
