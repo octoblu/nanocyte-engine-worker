@@ -54,7 +54,10 @@ class Command
     , (@timeout * 1000 * 2)
 
     queueWorker.run (error) =>
-      console.error error.stack if error?
+      if error?
+        console.log "Error flowId: #{error.flowId}"
+        console.error error.stack
+
       clearTimeout timeout
       callback()
 

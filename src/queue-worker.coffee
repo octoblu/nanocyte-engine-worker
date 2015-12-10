@@ -21,6 +21,7 @@ class QueueWorker
       engine.run request, (error) =>
         debug "the worker thought we had an error", benchmark.toString() if error?
         debug "the worker noticed we ended", benchmark.toString()
+        error.flowId = request.metadata?.flowId if error?
         callback error
 
 module.exports = QueueWorker
