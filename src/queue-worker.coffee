@@ -6,7 +6,6 @@ class QueueWorker
   constructor: ({@client,@timeout,@engineTimeout}) ->
 
   run: (callback) =>
-    debug 'waiting for work'
     @client.brpop 'request:queue', @timeout, (error,result) =>
       return callback error if error?
       return callback() unless result?

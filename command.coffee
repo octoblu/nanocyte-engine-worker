@@ -7,6 +7,18 @@ debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
 QueueWorker = require './src/queue-worker'
 
+debugLeak   = require('debug')('nanocyte-engine-worker:memwatch')
+memwatch    = require 'memwatch-next'
+
+doHeapDiff = false
+
+memwatch.on 'leak', (info) =>
+  debugLeak 'memleak:', JSON.stringify(info, null, 2)
+  doHeapDiff = true
+
+memwatch.on 'stats', (stats) =>
+  debugLeak 'stats:', JSON.stringify(stats, null, 2)
+
 class Command
   parseInt: (str) =>
     parseInt str
@@ -50,6 +62,13 @@ class Command
       client:        client
       timeout:       @timeout
       engineTimeout: @engineTimeout
+
+    if @heapDiff?
+      diff = heapDiff.end()
+      debugLeak 'heapDiff:', JSON.stringify(diff, null, 2)
+      @heapDiff = undefined
+
+    @heapDiff ?= new memwatch.HeapDiff() if doHeapDiff
 
     queueWorker.run (error) =>
       if error?
