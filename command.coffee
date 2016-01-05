@@ -10,12 +10,6 @@ QueueWorker = require './src/queue-worker'
 debugLeak   = require('debug')('nanocyte-engine-worker:memwatch')
 memwatch    = require 'memwatch-next'
 
-doHeapDiff = false
-
-memwatch.on 'leak', (info) =>
-  debugLeak 'memleak:', JSON.stringify(info, null, 2)
-  doHeapDiff = true
-
 memwatch.on 'stats', (stats) =>
   debugLeak 'stats:', JSON.stringify(stats, null, 2)
 
@@ -46,7 +40,6 @@ class Command
     @redisPort = process.env.REDIS_PORT
     @redisHost = process.env.REDIS_HOST
 
-
   run: =>
     @parseOptions()
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
@@ -63,19 +56,11 @@ class Command
       timeout:       @timeout
       engineTimeout: @engineTimeout
 
-    if @heapDiff?
-      diff = heapDiff.end()
-      debugLeak 'heapDiff:', JSON.stringify(diff, null, 2)
-      @heapDiff = undefined
-
-    @heapDiff ?= new memwatch.HeapDiff() if doHeapDiff
-
     queueWorker.run (error) =>
       if error?
         console.log "Error flowId: #{error.flowId}"
         console.error error.stack
-
-      callback()
+      process.nextTick callback
 
   die: (error) =>
     return process.exit(0) unless error?
