@@ -3,7 +3,7 @@ Engine          = require '@octoblu/nanocyte-engine-simple'
 Benchmark       = require 'simple-benchmark'
 
 class QueueWorker
-  constructor: ({@client,@timeout}) ->
+  constructor: ({@client,@timeout,@engineTimeout}) ->
 
   run: (callback) =>
     debug 'waiting for work'
@@ -18,7 +18,8 @@ class QueueWorker
       @flowId = request.metadata.flowId # used to output flowId in case of timeout
 
       benchmark = new Benchmark label: 'queue-worker'
-      engine = new Engine
+      engine = new Engine timeoutSeconds: @engineTimeout
+
       engine.run request, (error) =>
         debug "the worker thought we had an error", benchmark.toString() if error?
         debug "the worker noticed we ended", benchmark.toString()

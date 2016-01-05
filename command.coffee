@@ -17,9 +17,10 @@ class Command
       .option '-n, --namespace <nanocyte-engine>', 'job handler queue namespace.', 'nanocyte-engine'
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <45>', 'seconds to wait for a next job.', @parseInt, 45
+      .option '--engine-timeout <90>', 'seconds to allow engine execution.', @parseInt, 90
       .parse process.argv
 
-    {@namespace,@singleRun,@timeout} = commander
+    {@namespace,@singleRun,@timeout,@engineTimeout} = commander
 
     if process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE?
       @namespace = process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE
@@ -46,21 +47,15 @@ class Command
 
   queueWorkerRun: (client, callback) =>
     queueWorker = new QueueWorker
-      client:    client
-      timeout:   @timeout
-
-    timeout = setTimeout =>
-      error = new Error 'Timeout exceeded, exiting'
-      error.flowId = queueWorker.flowId
-      @die error
-    , (@timeout * 1000 * 2)
+      client:        client
+      timeout:       @timeout
+      engineTimeout: @engineTimeout
 
     queueWorker.run (error) =>
       if error?
         console.log "Error flowId: #{error.flowId}"
         console.error error.stack
 
-      clearTimeout timeout
       callback()
 
   die: (error) =>
