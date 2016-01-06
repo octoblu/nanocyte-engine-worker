@@ -25,9 +25,10 @@ class Command
       .option '-t, --timeout <45>', 'seconds to wait for a next job.', @parseInt, 45
       .option '--engine-timeout <90>', 'seconds to allow engine execution.', @parseInt, 90
       .option '--request-queue-name <request:queue>'
+      .option '--memory-limit <unlimited>', 'in megabytes'
       .parse process.argv
 
-    {@namespace,@singleRun,@timeout,@engineTimeout,@requestQueueName} = commander
+    {@namespace,@singleRun,@timeout,@engineTimeout,@requestQueueName,@memoryLimit} = commander
 
     if process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE?
       @namespace = process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE
@@ -37,6 +38,15 @@ class Command
 
     if process.env.NANOCYTE_ENGINE_WORKER_TIMEOUT?
       @timeout = parseInt process.env.NANOCYTE_ENGINE_WORKER_TIMEOUT
+
+    if process.env.NANOCYTE_ENGINE_REQUEST_QUEUE_NAME?
+      @requestQueueName = process.env.NANOCYTE_ENGINE_REQUEST_QUEUE_NAME
+
+    if process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT?
+      @memoryLimit = process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT
+
+    if @memoryLimit?
+      @memoryLimit = parseInt @memoryLimit
 
     @redisPort = process.env.REDIS_PORT
     @redisHost = process.env.REDIS_HOST
@@ -57,6 +67,7 @@ class Command
       timeout:          @timeout
       engineTimeout:    @engineTimeout
       requestQueueName: @requestQueueName
+      memoryLimit:      @memoryLimit
 
     queueWorker.run (error) =>
       if error?
