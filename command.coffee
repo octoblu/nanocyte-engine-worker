@@ -24,9 +24,10 @@ class Command
       .option '-s, --single-run', 'perform only one job.'
       .option '-t, --timeout <45>', 'seconds to wait for a next job.', @parseInt, 45
       .option '--engine-timeout <90>', 'seconds to allow engine execution.', @parseInt, 90
+      .option '--request-queue-name <request:queue>'
       .parse process.argv
 
-    {@namespace,@singleRun,@timeout,@engineTimeout} = commander
+    {@namespace,@singleRun,@timeout,@engineTimeout,@requestQueueName} = commander
 
     if process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE?
       @namespace = process.env.NANOCYTE_ENGINE_WORKER_NAMESPACE
@@ -52,9 +53,10 @@ class Command
 
   queueWorkerRun: (client, callback) =>
     queueWorker = new QueueWorker
-      client:        client
-      timeout:       @timeout
-      engineTimeout: @engineTimeout
+      client:           client
+      timeout:          @timeout
+      engineTimeout:    @engineTimeout
+      requestQueueName: @requestQueueName
 
     queueWorker.run (error) =>
       if error?

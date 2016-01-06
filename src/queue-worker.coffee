@@ -3,10 +3,11 @@ Engine          = require '@octoblu/nanocyte-engine-simple'
 Benchmark       = require 'simple-benchmark'
 
 class QueueWorker
-  constructor: ({@client,@timeout,@engineTimeout}) ->
+  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName}) ->
+    @requestQueueName ?= 'request:queue'
 
   run: (callback) =>
-    @client.brpop 'request:queue', @timeout, (error,result) =>
+    @client.brpop @requestQueueName, @timeout, (error,result) =>
       return callback error if error?
       return callback() unless result?
 
