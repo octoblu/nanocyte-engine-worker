@@ -1,23 +1,33 @@
 {
   "name": "nanocyte-engine-worker",
-  "private": true,
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "Nanocyte Engine queue worker",
-  "main": "index.js",
-  "scripts": {
-    "start": "node command.js",
-    "test": "istanbul cover _mocha -- -R spec"
+  "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
+  "bugs": {
+    "url": "https://github.com/octoblu/nanocyte-engine-worker/issues"
   },
+  "license": "MIT",
+  "author": "Octoblu, Inc.",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/octoblu/nanocyte-engine-worker.git"
   },
-  "author": "Octoblu, Inc.",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/octoblu/nanocyte-engine-worker/issues"
+  "scripts": {
+    "start": "node command.js",
+    "test": "istanbul cover _mocha -- -R spec"
   },
-  "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
+  "dependencies": {
+    "@octoblu/nanocyte-engine-simple": "^4.2.0",
+    "@octoblu/redis-ns": "^0.1.1",
+    "async": "^1.5.0",
+    "commander": "^2.9.0",
+    "debug": "^2.2.0",
+    "lodash": "^3.10.1",
+    "memwatch-next": "^0.2.10",
+    "redis": "^2.3.0",
+    "simple-benchmark": "^1.0.7"
+  },
   "devDependencies": {
     "chai": "^3.4.0",
     "coffee-coverage": "^0.7.0",
@@ -28,15 +38,5 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
   },
-  "dependencies": {
-    "@octoblu/nanocyte-engine-simple": "^4.1.2",
-    "@octoblu/redis-ns": "^0.1.1",
-    "async": "^1.5.0",
-    "commander": "^2.9.0",
-    "debug": "^2.2.0",
-    "lodash": "^3.10.1",
-    "memwatch-next": "^0.2.10",
-    "redis": "^2.3.0",
-    "simple-benchmark": "^1.0.7"
-  }
+  "private": true
 }
