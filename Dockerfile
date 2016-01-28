@@ -8,7 +8,7 @@ COPY . /usr/src/app/
 
 # this is crazy for a reason
 RUN npm -s install @octoblu/nanocyte-engine-simple --ignore-scripts
-ADD https://raw.githubusercontent.com/octoblu/nanocyte-node-registry/master/registry.json /usr/src/app/node_modules/@octoblu/nanocyte-engine-simple/nanocyte-node-registry.json
+ADD https://s3-us-west-2.amazonaws.com/nanocyte-registry/latest/registry.json /usr/src/app/node_modules/@octoblu/nanocyte-engine-simple/nanocyte-node-registry.json
 RUN cd /usr/src/app/node_modules/@octoblu/nanocyte-engine-simple; npm -s run postinstall
 RUN npm -s install
 # end craziness
