@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "description": "Nanocyte Engine queue worker",
   "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
   "bugs": {
