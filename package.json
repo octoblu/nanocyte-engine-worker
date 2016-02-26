@@ -24,7 +24,6 @@
     "commander": "^2.9.0",
     "debug": "^2.2.0",
     "lodash": "^3.10.1",
-    "memwatch-next": "^0.2.10",
     "redis": "^2.3.0",
     "simple-benchmark": "^1.0.7"
   },

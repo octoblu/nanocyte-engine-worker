@@ -7,12 +7,6 @@ debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
 QueueWorker = require './src/queue-worker'
 
-debugLeak   = require('debug')('nanocyte-engine-worker:memwatch')
-memwatch    = require 'memwatch-next'
-
-memwatch.on 'stats', (stats) =>
-  debugLeak 'stats:', JSON.stringify(stats, null, 2)
-
 class Command
   parseInt: (str) =>
     parseInt str
