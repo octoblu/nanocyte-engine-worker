@@ -4,7 +4,9 @@ node_js:
 services:
 - redis-server
 env:
-- CXX=g++-4.8
+  - CXX=g++-4.8
+  global:
+    secure: E9/M7JdHX/aeEontHjFM6rYUxsV70FyJZFhXFyxfYToImuhz8xvQZeB11W2xqPeAkf6JC6GuDRFFWhddlrPTmBecBP6MuZk+zB5a7yIvzngTqgOPElMGAGW//ZVw6RmFTUPmBanumKoG7JDxJIyCWIIDKcutOu2o9OHrMUnW+HIJZy+cmfqcr2QQcXrMHHvEZL3eXmWI4SaEwsq88gfEhUQzZ997S7DBvCsusd12RE2iH5PR5VQE8uv3OmsbNE5afeaWsjiOm6fvlpi/reLi/pP8qfGxLqyU8EAnSTGrBZZATukrKhT/+fzr1zGQgZUACHLfS2tCHsIG34xl3WdWv1JHjSWv3Uwx2j3V3og/rrcxrMjbEzkDq9lY9OnCkTw3yIxdCc08il5BPCWEdMvCmzp1ClxTK3sazLNuYm2LMHicapRoL/dxg7atrZHYZjEuK4Q/zQgmceyXaQmXCsoUj6vckXdkBC/WKE7oITOdKeYwq/87NgkVMvbip/A7JBpmf4UTY8G5T6GvfvCuBPaqmbgAxDXYZAo+QYeo8EHscJM0QOb358DNcH8KiGnuIDpS+lpIZ4rCplVYuolW4qezWXdDv50bQRPvoq/V3T/xpXrCk/t70Huvgc0mN3/XmBtkcNYEF61dT1PiSi4p5gbjo9Z1xC3vP955c8Bk8qeQehI=
 addons:
   apt:
     sources:
@@ -13,11 +15,6 @@ addons:
       - g++-4.8
 before_install:
 - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-install:
-- npm install nanocyte-engine-simple
 script:
 - cd ./node_modules/@octoblu/nanocyte-engine-simple
 - npm test
-env:
-  global:
-    secure: E9/M7JdHX/aeEontHjFM6rYUxsV70FyJZFhXFyxfYToImuhz8xvQZeB11W2xqPeAkf6JC6GuDRFFWhddlrPTmBecBP6MuZk+zB5a7yIvzngTqgOPElMGAGW//ZVw6RmFTUPmBanumKoG7JDxJIyCWIIDKcutOu2o9OHrMUnW+HIJZy+cmfqcr2QQcXrMHHvEZL3eXmWI4SaEwsq88gfEhUQzZ997S7DBvCsusd12RE2iH5PR5VQE8uv3OmsbNE5afeaWsjiOm6fvlpi/reLi/pP8qfGxLqyU8EAnSTGrBZZATukrKhT/+fzr1zGQgZUACHLfS2tCHsIG34xl3WdWv1JHjSWv3Uwx2j3V3og/rrcxrMjbEzkDq9lY9OnCkTw3yIxdCc08il5BPCWEdMvCmzp1ClxTK3sazLNuYm2LMHicapRoL/dxg7atrZHYZjEuK4Q/zQgmceyXaQmXCsoUj6vckXdkBC/WKE7oITOdKeYwq/87NgkVMvbip/A7JBpmf4UTY8G5T6GvfvCuBPaqmbgAxDXYZAo+QYeo8EHscJM0QOb358DNcH8KiGnuIDpS+lpIZ4rCplVYuolW4qezWXdDv50bQRPvoq/V3T/xpXrCk/t70Huvgc0mN3/XmBtkcNYEF61dT1PiSi4p5gbjo9Z1xC3vP955c8Bk8qeQehI=
