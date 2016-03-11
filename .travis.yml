@@ -19,5 +19,4 @@ before_install:
 install:
 - env NODE_ENV=development npm install
 script:
-- cd ./node_modules/@octoblu/nanocyte-engine-simple
-- env NODE_ENV=development npm test
+- pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm test; popd
