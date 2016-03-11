@@ -4,15 +4,16 @@ node_js:
 services:
 - redis-server
 env:
+  matrix:
   - CXX=g++-4.8
   global:
-    secure: E9/M7JdHX/aeEontHjFM6rYUxsV70FyJZFhXFyxfYToImuhz8xvQZeB11W2xqPeAkf6JC6GuDRFFWhddlrPTmBecBP6MuZk+zB5a7yIvzngTqgOPElMGAGW//ZVw6RmFTUPmBanumKoG7JDxJIyCWIIDKcutOu2o9OHrMUnW+HIJZy+cmfqcr2QQcXrMHHvEZL3eXmWI4SaEwsq88gfEhUQzZ997S7DBvCsusd12RE2iH5PR5VQE8uv3OmsbNE5afeaWsjiOm6fvlpi/reLi/pP8qfGxLqyU8EAnSTGrBZZATukrKhT/+fzr1zGQgZUACHLfS2tCHsIG34xl3WdWv1JHjSWv3Uwx2j3V3og/rrcxrMjbEzkDq9lY9OnCkTw3yIxdCc08il5BPCWEdMvCmzp1ClxTK3sazLNuYm2LMHicapRoL/dxg7atrZHYZjEuK4Q/zQgmceyXaQmXCsoUj6vckXdkBC/WKE7oITOdKeYwq/87NgkVMvbip/A7JBpmf4UTY8G5T6GvfvCuBPaqmbgAxDXYZAo+QYeo8EHscJM0QOb358DNcH8KiGnuIDpS+lpIZ4rCplVYuolW4qezWXdDv50bQRPvoq/V3T/xpXrCk/t70Huvgc0mN3/XmBtkcNYEF61dT1PiSi4p5gbjo9Z1xC3vP955c8Bk8qeQehI=
+    secure: TDs5TaMwtpyQxCL0p4hS11kMWkfkr56L2upWWI2mqLO7pxqsAIsSZH9HYX630O8wtOyII5VSjp0HOVA8+qe4WbTngU+50fY4on+it978aUajkgA4KTw4Kwn8MCIybS3YhOPuQjI5WbdmhrA9CJNrnuRHP5mZJ/gMdy48EBrK+0Vm8PzSsik9oLc4Zg3Z2rg4vq+DE7kB0Oz2XQ8emFlvpnfOfsTZbUVDa+lMzQFIGifzAdY6j2GZfXJA/dARG260CtT6vmbWHPS2au3IvVSGz6x1PO7lvsFvx9Qd+LZ9TvAvQNKbaXtA7I5Wb44JnLV+RFN1ykJ7OxKv5CKm3KJJ9AUwPlBVRWLHbz+Zji6HOqfLEaYIAwK07ewT198plcx3WK3hbz37aXgziDP4/MTrQ+Zo9IV9UTmcEd40H8WnQFSBRb7s2yMb6SAFuAQ6LM0NIJnJ+DJb5ZwpJRUydO1rl4ev5+SCtLX5BUziNp4VIv56NPmyNRPbhFDlcm7S9atI7LAciRCEudB3mBKhKAXEjDMx1YqXKSR6nKl4gaEvSy93CiMu/XgvanY5Wi5co4vAK686EYCxpsc1j9yXZTt1bKOQG+TyOY3z/6kqjtFEDf9tnwNtytUzyabTNlWu2NmFne4cLZQqOn/R+NvfHkawQwPxAE72rsLkedSlv2YGzwo=
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
+    - g++-4.8
 before_install:
 - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 script:
