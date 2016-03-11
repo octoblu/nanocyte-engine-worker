@@ -16,6 +16,8 @@ addons:
     - g++-4.8
 before_install:
 - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+install:
+- env NODE_ENV=development npm install
 script:
 - cd ./node_modules/@octoblu/nanocyte-engine-simple
-- npm test
+- env NODE_ENV=development npm test
