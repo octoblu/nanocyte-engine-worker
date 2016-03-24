@@ -1,6 +1,7 @@
 _           = require 'lodash'
 commander   = require 'commander'
 async       = require 'async'
+JobLogger   = require 'job-logger'
 redis       = require 'redis'
 RedisNS     = require '@octoblu/redis-ns'
 debug       = require('debug')('nanocyte-engine-worker:command')
@@ -39,6 +40,13 @@ class Command
     if process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT?
       @memoryLimit = process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT
 
+    throw new Error('env: JOB_LOG_REDIS_URI is required') unless process.env.JOB_LOG_REDIS_URI?
+    @jobLogRedisUri = process.env.JOB_LOG_REDIS_URI
+    throw new Error('env: JOB_LOG_QUEUE is required') unless process.env.JOB_LOG_QUEUE?
+    @jobLogQueue = process.env.JOB_LOG_QUEUE
+    throw new Error('env: JOB_LOG_SAMPLE_RATE is required') unless process.env.JOB_LOG_SAMPLE_RATE?
+    @jobLogSampleRate = parseFloat process.env.JOB_LOG_SAMPLE_RATE
+
     if @memoryLimit?
       @memoryLimit = parseInt @memoryLimit
 
@@ -48,16 +56,23 @@ class Command
   run: =>
     @parseOptions()
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
+    jobLogger = new JobLogger
+      client: redis.createClient(@jobLogRedisUri)
+      indexPrefix: 'metric:nanocyte-engine-simple'
+      type: 'metric:nanocyte-engine-simple:job'
+      jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
 
     process.on 'SIGTERM', => @terminate = true
-    return @queueWorkerRun client, @die if @singleRun
-    async.until @terminated, async.apply(@queueWorkerRun, client), @die
+    return @queueWorkerRun client, jobLogger, @die if @singleRun
+    async.until @terminated, async.apply(@queueWorkerRun, client, jobLogger), @die
 
   terminated: => @terminate
 
-  queueWorkerRun: (client, callback) =>
+  queueWorkerRun: (client, jobLogger, callback) =>
     queueWorker = new QueueWorker
       client:           client
+      jobLogger:        jobLogger
       timeout:          @timeout
       engineTimeout:    @engineTimeout
       requestQueueName: @requestQueueName

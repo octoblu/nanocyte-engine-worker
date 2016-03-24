@@ -3,7 +3,7 @@ Engine          = require '@octoblu/nanocyte-engine-simple'
 Benchmark       = require 'simple-benchmark'
 
 class QueueWorker
-  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit}) ->
+  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger}) ->
     @requestQueueName ?= 'request:queue'
 
   run: (callback) =>
@@ -18,20 +18,32 @@ class QueueWorker
       return callback() unless result?
 
       [queueName, requestStr] = result
-
       request = JSON.parse requestStr
-      debug 'brpop', request.metadata
-      @flowId = request.metadata.flowId # used to output flowId in case of timeout
+      benchmark = new Benchmark label: 'engine-worker'
 
-      benchmark = new Benchmark label: 'queue-worker'
+      @processJob request, (error) =>
+        code = 200
+        code = 500 if error?
+        request = metadata: {toUuid: request.metadata.flowId}
+        response = metadata: {code}
 
-      engine = new Engine timeoutSeconds: @engineTimeout
+        @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+          return callback jobLoggerError if jobLoggerError?
+          callback error
 
-      engine.run request, (error) =>
-        debug "the worker thought we had an error", benchmark.toString() if error?
-        debug "the worker noticed we ended", benchmark.toString()
-        error.flowId = request.metadata?.flowId if error?
+  processJob: (request, callback) =>
+    debug 'brpop', request.metadata
+    @flowId = request.metadata.flowId # used to output flowId in case of timeout
 
-        callback error
+    benchmark = new Benchmark label: 'queue-worker'
+
+    engine = new Engine timeoutSeconds: @engineTimeout
+
+    engine.run request, (error) =>
+      debug "the worker thought we had an error", benchmark.toString() if error?
+      debug "the worker noticed we ended", benchmark.toString()
+      error.flowId = request.metadata?.flowId if error?
+
+      callback error
 
 module.exports = QueueWorker
