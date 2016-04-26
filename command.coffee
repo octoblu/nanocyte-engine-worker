@@ -56,23 +56,32 @@ class Command
   run: =>
     @parseOptions()
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
+    jobLogClient = redis.createClient @jobLogRedisUri
     jobLogger = new JobLogger
-      client: redis.createClient(@jobLogRedisUri)
+      client: jobLogClient
       indexPrefix: 'metric:nanocyte-engine-simple'
       type: 'metric:nanocyte-engine-simple:job'
       jobLogQueue: @jobLogQueue
       sampleRate: @jobLogSampleRate
 
+    dispatchLogger = new JobLogger
+      client: jobLogClient
+      indexPrefix: 'metric:nanocyte-engine-simple'
+      type: 'metric:nanocyte-engine-simple:dispatch'
+      jobLogQueue: @jobLogQueue
+      sampleRate: @jobLogSampleRate
+
     process.on 'SIGTERM', => @terminate = true
-    return @queueWorkerRun client, jobLogger, @die if @singleRun
-    async.until @terminated, async.apply(@queueWorkerRun, client, jobLogger), @die
+    return @queueWorkerRun client, jobLogger, dispatchLogger, @die if @singleRun
+    async.until @terminated, async.apply(@queueWorkerRun, client, jobLogger, dispatchLogger), @die
 
   terminated: => @terminate
 
-  queueWorkerRun: (client, jobLogger, callback) =>
+  queueWorkerRun: (client, jobLogger, dispatchLogger, callback) =>
     queueWorker = new QueueWorker
       client:           client
       jobLogger:        jobLogger
+      dispatchLogger:   dispatchLogger
       timeout:          @timeout
       engineTimeout:    @engineTimeout
       requestQueueName: @requestQueueName

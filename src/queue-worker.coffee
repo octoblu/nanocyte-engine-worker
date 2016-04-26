@@ -5,6 +5,7 @@ Benchmark       = require 'simple-benchmark'
 class QueueWorker
   constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger}) ->
     @requestQueueName ?= 'request:queue'
+    @dispatchBenchmark = new SimpleBenchmark label: 'QueueWorker'
 
   run: (callback) =>
     if @memoryLimit?
@@ -19,17 +20,19 @@ class QueueWorker
 
       [queueName, requestStr] = result
       request = JSON.parse requestStr
-      benchmark = new Benchmark label: 'engine-worker'
 
-      @processJob request, (error) =>
-        code = 200
-        code = 500 if error?
-        request = metadata: {toUuid: request.metadata.flowId}
-        response = metadata: {code}
+      @dispatchLogger.log {request, elapsedTime: @dispatchBenchmark.elapsed()}, =>
+        benchmark = new Benchmark label: 'engine-worker'
 
-        @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
-          return callback jobLoggerError if jobLoggerError?
-          callback error
+        @processJob request, (error) =>
+          code = 200
+          code = 500 if error?
+          request = metadata: {toUuid: request.metadata.flowId}
+          response = metadata: {code}
+
+          @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+            return callback jobLoggerError if jobLoggerError?
+            callback error
 
   processJob: (request, callback) =>
     debug 'brpop', request.metadata
