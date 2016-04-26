@@ -3,9 +3,9 @@ Engine          = require '@octoblu/nanocyte-engine-simple'
 Benchmark       = require 'simple-benchmark'
 
 class QueueWorker
-  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger}) ->
+  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger,@dispatchLogger}) ->
     @requestQueueName ?= 'request:queue'
-    @dispatchBenchmark = new SimpleBenchmark label: 'QueueWorker'
+    @dispatchBenchmark = new Benchmark label: 'QueueWorker'
 
   run: (callback) =>
     if @memoryLimit?
