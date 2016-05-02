@@ -8,31 +8,32 @@ class QueueWorker
     @dispatchBenchmark = new Benchmark label: 'QueueWorker'
 
   run: (callback) =>
-    if @memoryLimit?
-      rss = process.memoryUsage().rss
-      if rss > @memoryLimit * 1024 * 1024
-        console.error "exiting with rss beyond limit at: #{rss}"
-        process.exit 1
+    process.nextTick =>
+      if @memoryLimit?
+        rss = process.memoryUsage().rss
+        if rss > @memoryLimit * 1024 * 1024
+          console.error "exiting with rss beyond limit at: #{rss}"
+          process.exit 1
 
-    @client.brpop @requestQueueName, @timeout, (error,result) =>
-      return callback error if error?
-      return callback() unless result?
+      @client.brpop @requestQueueName, @timeout, (error,result) =>
+        return callback error if error?
+        return callback() unless result?
 
-      [queueName, requestStr] = result
-      request = JSON.parse requestStr
+        [queueName, requestStr] = result
+        request = JSON.parse requestStr
 
-      @dispatchLogger.log {request, elapsedTime: @dispatchBenchmark.elapsed()}, =>
-        benchmark = new Benchmark label: 'engine-worker'
+        @dispatchLogger.log {request, elapsedTime: @dispatchBenchmark.elapsed()}, =>
+          benchmark = new Benchmark label: 'engine-worker'
 
-        @processJob request, (error) =>
-          code = 200
-          code = 500 if error?
-          request = metadata: {toUuid: request.metadata.flowId}
-          response = metadata: {code}
+          @processJob request, (error) =>
+            code = 200
+            code = 500 if error?
+            request = metadata: {toUuid: request.metadata.flowId}
+            response = metadata: {code}
 
-          @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
-            return callback jobLoggerError if jobLoggerError?
-            callback error
+            @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+              return callback jobLoggerError if jobLoggerError?
+              callback error
 
   processJob: (request, callback) =>
     debug 'brpop', request.metadata
