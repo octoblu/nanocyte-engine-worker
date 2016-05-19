@@ -1,9 +1,8 @@
 debug           = require('debug')('nanocyte-engine-worker:queue-worker')
-Engine          = require '@octoblu/nanocyte-engine-simple'
 Benchmark       = require 'simple-benchmark'
 
 class QueueWorker
-  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger,@dispatchLogger}) ->
+  constructor: ({@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger,@dispatchLogger,@Engine}) ->
     @requestQueueName ?= 'request:queue'
     @dispatchBenchmark = new Benchmark label: 'QueueWorker'
 
@@ -41,7 +40,7 @@ class QueueWorker
 
     benchmark = new Benchmark label: 'queue-worker'
 
-    engine = new Engine timeoutSeconds: @engineTimeout
+    engine = new @Engine timeoutSeconds: @engineTimeout
 
     engine.run request, (error) =>
       debug "the worker thought we had an error", benchmark.toString() if error?

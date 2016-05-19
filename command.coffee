@@ -7,6 +7,9 @@ RedisNS     = require '@octoblu/redis-ns'
 debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
 QueueWorker = require './src/queue-worker'
+Engine      = require '@octoblu/nanocyte-engine-simple'
+
+new Engine() # abosrb initial startup costs before brpop
 
 class Command
   parseInt: (str) =>
@@ -78,15 +81,16 @@ class Command
   terminated: => @terminate
 
   queueWorkerRun: (client, jobLogger, dispatchLogger, callback) =>
-    queueWorker = new QueueWorker
-      client:           client
-      jobLogger:        jobLogger
-      dispatchLogger:   dispatchLogger
-      timeout:          @timeout
-      engineTimeout:    @engineTimeout
-      requestQueueName: @requestQueueName
-      memoryLimit:      @memoryLimit
-
+    queueWorker = new QueueWorker {
+      client
+      jobLogger
+      dispatchLogger
+      @timeout
+      @engineTimeout
+      @requestQueueName
+      @memoryLimit
+      Engine
+    }
     queueWorker.run (error) =>
       if error?
         console.log "Error flowId: #{error.flowId}"

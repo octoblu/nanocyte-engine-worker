@@ -1,0 +1,16 @@
+FROM node:5
+MAINTAINER Octoblu, Inc. <docker@octoblu.com>
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+COPY . /usr/src/app/
+COPY .npmrc /root/
+
+# this is crazy for a reason
+# RUN npm install @octoblu/nanocyte-engine-simple --ignore-scripts
+# RUN cd /usr/src/app/node_modules/@octoblu/nanocyte-engine-simple; npm run postinstall
+RUN npm install
+# end crazinessF
+
+CMD [ "node", "--max-old-space-size=150", "command.js" ]
