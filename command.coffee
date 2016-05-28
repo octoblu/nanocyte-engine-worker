@@ -2,7 +2,7 @@ _           = require 'lodash'
 commander   = require 'commander'
 async       = require 'async'
 JobLogger   = require 'job-logger'
-redis       = require 'redis'
+redis       = require 'ioredis'
 RedisNS     = require '@octoblu/redis-ns'
 debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
@@ -58,8 +58,8 @@ class Command
 
   run: =>
     @parseOptions()
-    client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost)
-    jobLogClient = redis.createClient @jobLogRedisUri
+    client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost, dropBufferSupport: true)
+    jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
     jobLogger = new JobLogger
       client: jobLogClient
       indexPrefix: 'metric:nanocyte-engine-simple'
