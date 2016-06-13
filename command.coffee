@@ -55,17 +55,17 @@ class Command
     if @memoryLimit?
       @memoryLimit = parseInt @memoryLimit
 
-    @redisPort = process.env.REDIS_PORT
-    @redisHost = process.env.REDIS_HOST
+    @redisUri = process.env.REDIS_URI
+    throw new Error('env: REDIS_URI is required') unless process.env.REDIS_URI
 
   run: =>
     @parseOptions()
 
-    cache = redis.createClient @redisPort, @redisHost
+    cache = redis.createClient @redisUri, dropBufferSupport: true
     mongo = mongojs @mongoUri, ['instances']
     datastore = mongo.instances
 
-    client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost, dropBufferSupport: true)
+    client = new RedisNS @namespace, redis.createClient(@redisUri, dropBufferSupport: true)
     jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
     jobLogger = new JobLogger
       client: jobLogClient
