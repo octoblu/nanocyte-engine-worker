@@ -1,10 +1,9 @@
-_           = require 'lodash'
 commander   = require 'commander'
 async       = require 'async'
 JobLogger   = require 'job-logger'
 redis       = require 'ioredis'
+mongojs     = require 'mongojs'
 RedisNS     = require '@octoblu/redis-ns'
-debug       = require('debug')('nanocyte-engine-worker:command')
 packageJSON = require './package.json'
 QueueWorker = require './src/queue-worker'
 Engine      = require '@octoblu/nanocyte-engine-simple'
@@ -50,6 +49,9 @@ class Command
     throw new Error('env: JOB_LOG_SAMPLE_RATE is required') unless process.env.JOB_LOG_SAMPLE_RATE?
     @jobLogSampleRate = parseFloat process.env.JOB_LOG_SAMPLE_RATE
 
+    throw new Error('env: MONGODB_URI is required') unless process.env.MONGODB_URI
+    @mongoUri = process.env.MONGODB_URI
+
     if @memoryLimit?
       @memoryLimit = parseInt @memoryLimit
 
@@ -58,6 +60,11 @@ class Command
 
   run: =>
     @parseOptions()
+
+    cache = redis.createClient @redisPort, @redisHost
+    mongo = mongojs @mongoUri, ['instances']
+    datastore = mongo.instances
+
     client = new RedisNS @namespace, redis.createClient(@redisPort, @redisHost, dropBufferSupport: true)
     jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
     jobLogger = new JobLogger
@@ -75,13 +82,15 @@ class Command
       sampleRate: @jobLogSampleRate
 
     process.on 'SIGTERM', => @terminate = true
-    return @queueWorkerRun client, jobLogger, dispatchLogger, @die if @singleRun
-    async.until @terminated, async.apply(@queueWorkerRun, client, jobLogger, dispatchLogger), @die
+    return @queueWorkerRun cache, datastore, client, jobLogger, dispatchLogger, @die if @singleRun
+    async.until @terminated, async.apply(@queueWorkerRun, cache, datastore, client, jobLogger, dispatchLogger), @die
 
   terminated: => @terminate
 
-  queueWorkerRun: (client, jobLogger, dispatchLogger, callback) =>
+  queueWorkerRun: (cache, datastore, client, jobLogger, dispatchLogger, callback) =>
     queueWorker = new QueueWorker {
+      cache
+      datastore
       client
       jobLogger
       dispatchLogger
