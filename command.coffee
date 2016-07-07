@@ -49,8 +49,8 @@ class Command
     throw new Error('env: JOB_LOG_SAMPLE_RATE is required') unless process.env.JOB_LOG_SAMPLE_RATE?
     @jobLogSampleRate = parseFloat process.env.JOB_LOG_SAMPLE_RATE
 
-    throw new Error('env: MONGODB_URI is required') unless process.env.MONGODB_URI
-    @mongoUri = process.env.MONGODB_URI
+    throw new Error('env: MESHBLU_MONGODB_URI is required') unless process.env.MESHBLU_MONGODB_URI
+    @mongoUri = process.env.MESHBLU_MONGODB_URI
 
     if @memoryLimit?
       @memoryLimit = parseInt @memoryLimit
@@ -65,34 +65,34 @@ class Command
     mongo = mongojs @mongoUri, ['instances']
 
     mongo.runCommand {ping: 1}, (error) =>
-      return callback error if error?
+      return @die error if error?
 
       setInterval =>
         mongo.runCommand {ping: 1}, (error) =>
           @die error if error?
       , 10 * 1000
 
-    datastore = mongo.instances
+      datastore = mongo.instances
 
-    client = new RedisNS @namespace, redis.createClient(@redisUri, dropBufferSupport: true)
-    jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
-    jobLogger = new JobLogger
-      client: jobLogClient
-      indexPrefix: 'metric:nanocyte-engine-simple'
-      type: 'metric:nanocyte-engine-simple:job'
-      jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
+      client = new RedisNS @namespace, redis.createClient(@redisUri, dropBufferSupport: true)
+      jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
+      jobLogger = new JobLogger
+        client: jobLogClient
+        indexPrefix: 'metric:nanocyte-engine-simple'
+        type: 'metric:nanocyte-engine-simple:job'
+        jobLogQueue: @jobLogQueue
+        sampleRate: @jobLogSampleRate
 
-    dispatchLogger = new JobLogger
-      client: jobLogClient
-      indexPrefix: 'metric:nanocyte-engine-simple'
-      type: 'metric:nanocyte-engine-simple:dispatch'
-      jobLogQueue: @jobLogQueue
-      sampleRate: @jobLogSampleRate
+      dispatchLogger = new JobLogger
+        client: jobLogClient
+        indexPrefix: 'metric:nanocyte-engine-simple'
+        type: 'metric:nanocyte-engine-simple:dispatch'
+        jobLogQueue: @jobLogQueue
+        sampleRate: @jobLogSampleRate
 
-    process.on 'SIGTERM', => @terminate = true
-    return @queueWorkerRun cache, datastore, client, jobLogger, dispatchLogger, @die if @singleRun
-    async.until @terminated, async.apply(@queueWorkerRun, cache, datastore, client, jobLogger, dispatchLogger), @die
+      process.on 'SIGTERM', => @terminate = true
+      return @queueWorkerRun cache, datastore, client, jobLogger, dispatchLogger, @die if @singleRun
+      async.until @terminated, async.apply(@queueWorkerRun, cache, datastore, client, jobLogger, dispatchLogger), @die
 
   terminated: => @terminate
 
