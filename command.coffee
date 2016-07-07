@@ -63,6 +63,15 @@ class Command
 
     cache = redis.createClient @redisUri, dropBufferSupport: true
     mongo = mongojs @mongoUri, ['instances']
+
+    mongo.runCommand {ping: 1}, (error) =>
+      return callback error if error?
+
+      setInterval =>
+        mongo.runCommand {ping: 1}, (error) =>
+          @die error if error?
+      , 10 * 1000
+
     datastore = mongo.instances
 
     client = new RedisNS @namespace, redis.createClient(@redisUri, dropBufferSupport: true)
