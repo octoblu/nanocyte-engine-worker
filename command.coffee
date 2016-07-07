@@ -49,8 +49,8 @@ class Command
     throw new Error('env: JOB_LOG_SAMPLE_RATE is required') unless process.env.JOB_LOG_SAMPLE_RATE?
     @jobLogSampleRate = parseFloat process.env.JOB_LOG_SAMPLE_RATE
 
-    throw new Error('env: MESHBLU_MONGODB_URI is required') unless process.env.MESHBLU_MONGODB_URI
-    @mongoUri = process.env.MESHBLU_MONGODB_URI
+    throw new Error('env: MONGODB_URI is required') unless process.env.MONGODB_URI
+    @mongoUri = process.env.MONGODB_URI
 
     if @memoryLimit?
       @memoryLimit = parseInt @memoryLimit
