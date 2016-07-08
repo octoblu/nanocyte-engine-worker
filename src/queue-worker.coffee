@@ -66,7 +66,6 @@ class QueueWorker
 
     return false
 
-
   processJob: (request, callback) =>
     debug 'brpop', request.metadata
     @flowId = request.metadata.flowId # used to output flowId in case of timeout
