@@ -30,22 +30,42 @@ class QueueWorker
 
         @dispatchLogger.log {request, elapsedTime: @dispatchBenchmark.elapsed()}, =>
           benchmark = new Benchmark label: 'engine-worker'
-
-          @precacheJob request, (error) =>
+          @possiblyDeleteCache request, (error) =>
             return callback error if error?
-            @processJob request, (error) =>
-              code = 200
-              code = 500 if error?
-              request = metadata: {toUuid: request.metadata.flowId}
-              response = metadata: {code}
 
-              @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
-                return callback jobLoggerError if jobLoggerError?
-                callback error
+            @precacheJob request, (error) =>
+              return callback error if error?
 
-  precacheJob: (request, callback) =>
-    {flowId, instanceId} = request.metadata
+              @processJob request, (error) =>
+                code = 200
+                code = 500 if error?
+                request = metadata: {toUuid: request.metadata.flowId}
+                response = metadata: {code}
+
+                @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+                  return callback jobLoggerError if jobLoggerError?
+                  callback error
+
+  precacheJob: ({metadata}, callback) =>
+    {flowId, instanceId} = metadata
     @flowSynchronizer.synchronizeByFlowIdAndInstanceId flowId, instanceId, callback
+
+  possiblyDeleteCache: ({message, metadata}, callback) =>
+    return callback() unless @isDeleteCacheMessage {metadata, message}
+
+    {flowId, instanceId} = metadata
+    @flowSynchronizer.clearByFlowIdAndInstanceId flowId, instanceId, callback
+
+
+  isDeleteCacheMessage: ({metadata, message}) =>
+    return true if message?.payload?.from == 'engine-start'
+    return true if message?.payload?.from == 'engine-stop'
+
+    return true if metadata?.to?.nodeId == 'engine-start'
+    return true if metadata?.to?.nodeId == 'engine-stop'
+
+    return false
+
 
   processJob: (request, callback) =>
     debug 'brpop', request.metadata
