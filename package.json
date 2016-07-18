@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "description": "Nanocyte Engine queue worker",
   "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
   "bugs": {
@@ -18,26 +18,25 @@
     "test": "istanbul cover _mocha -- -R spec"
   },
   "dependencies": {
-    "@octoblu/nanocyte-engine-simple": "^4.14.0",
+    "@octoblu/nanocyte-engine-simple": "^4.14.1",
     "@octoblu/redis-ns": "^1.3.1",
-    "async": "^1.5.0",
+    "async": "^2.0.0",
     "commander": "^2.9.0",
     "debug": "^2.2.0",
-    "ioredis": "^2.0.0",
+    "ioredis": "^2.2.0",
     "job-logger": "^2.5.0",
     "lodash": "^3.10.1",
     "mongojs": "^2.4.0",
     "nanocyte-configuration-synchronizer": "^2.5.0",
-    "redis": "^2.3.0",
     "simple-benchmark": "^1.0.7"
   },
   "devDependencies": {
     "chai": "^3.4.0",
-    "chai-subset": "^1.2.1",
-    "coffee-coverage": "^0.7.0",
+    "chai-subset": "^1.3.0",
+    "coffee-coverage": "^1.0.1",
     "coffee-script": "^1.10.0",
-    "istanbul": "^0.4.0",
-    "mocha": "^2.3.3",
+    "istanbul": "^0.4.4",
+    "mocha": "^2.5.3",
     "mocha-istanbul": "^0.2.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
