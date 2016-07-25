@@ -1,16 +1,23 @@
-commander   = require 'commander'
-async       = require 'async'
-JobLogger   = require 'job-logger'
-redis       = require 'ioredis'
-mongojs     = require 'mongojs'
-RedisNS     = require '@octoblu/redis-ns'
-packageJSON = require './package.json'
-QueueWorker = require './src/queue-worker'
-Engine      = require '@octoblu/nanocyte-engine-simple'
+commander    = require 'commander'
+async        = require 'async'
+JobLogger    = require 'job-logger'
+redis        = require 'ioredis'
+mongojs      = require 'mongojs'
+OctobluRaven = require 'octoblu-raven'
+RedisNS      = require '@octoblu/redis-ns'
+packageJSON  = require './package.json'
+QueueWorker  = require './src/queue-worker'
+Engine       = require '@octoblu/nanocyte-engine-simple'
 
 new Engine() # abosrb initial startup costs before brpop
 
 class Command
+  constructor: ->
+    @octobluRaven = new OctobluRaven()
+
+  catchErrors: =>
+    @octobluRaven.patchGlobal()
+
   parseInt: (str) =>
     parseInt str
 
@@ -111,15 +118,18 @@ class Command
     }
     queueWorker.run (error) =>
       if error?
+        @octobluRaven.reportError error
         console.log "Error flowId: #{error.flowId}"
         console.error error.stack
       process.nextTick callback
 
   die: (error) =>
     return process.exit(0) unless error?
+    @octobluRaven.reportError error
     console.log "Error flowId: #{error.flowId}" if error.flowId?
     console.error error.stack
     process.exit 1
 
 commandWork = new Command()
+commandWork.catchErrors()
 commandWork.run()

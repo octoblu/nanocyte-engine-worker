@@ -1,6 +1,6 @@
-debug            = require('debug')('nanocyte-engine-worker:queue-worker')
 Benchmark        = require 'simple-benchmark'
 FlowSynchronizer = require 'nanocyte-configuration-synchronizer'
+debug            = require('debug')('nanocyte-engine-worker:queue-worker')
 
 class QueueWorker
   constructor: (options) ->
