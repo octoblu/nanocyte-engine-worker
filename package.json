@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "2.2.15",
+  "version": "2.2.16",
   "description": "Nanocyte Engine queue worker",
   "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
   "bugs": {
@@ -27,7 +27,7 @@
     "job-logger": "^2.5.0",
     "lodash": "^3.10.1",
     "mongojs": "^2.4.0",
-    "nanocyte-configuration-synchronizer": "^2.5.2",
+    "nanocyte-configuration-synchronizer": "^2.5.3",
     "octoblu-raven": "^3.2.0",
     "simple-benchmark": "^1.0.7"
   },
