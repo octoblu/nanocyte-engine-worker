@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Nanocyte Engine queue worker",
   "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
   "bugs": {
@@ -18,7 +18,7 @@
     "test": "istanbul cover _mocha -- -R spec"
   },
   "dependencies": {
-    "@octoblu/nanocyte-engine-simple": "^4.17.1",
+    "@octoblu/nanocyte-engine-simple": "^5.0.0",
     "@octoblu/redis-ns": "^1.3.1",
     "async": "^2.0.0",
     "commander": "^2.9.0",
