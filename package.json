@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "node command.js",
-    "test": "istanbul cover _mocha -- -R spec"
+    "test": "istanbul cover _mocha -- -R spec --require coffee-coverage/register-istanbul && mocha --reporter json > coverage/mocha.json"
   },
   "dependencies": {
     "@octoblu/nanocyte-engine-simple": "^5.0.0",
