@@ -25,3 +25,6 @@ script:
 - pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm test; popd
 after_success:
 - bash <(curl -s https://codecov.io/bash) -t 91f56295-1de6-4f5b-8df3-46734be8801a
+branches:
+  only:
+  - "/^v[0-9]/"
