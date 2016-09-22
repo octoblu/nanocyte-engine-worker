@@ -4,6 +4,7 @@ node_js:
 services:
 - redis-server
   - /^v[0-9]/
+- mongo
 env:
   matrix:
   - CXX=g++-4.8
