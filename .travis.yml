@@ -1,33 +1,36 @@
 language: node_js
 node_js:
-- '5'
+  - '5'
 services:
-- mongodb
-- redis
+  - mongodb
+  - redis
 env:
   matrix:
-  - CXX=g++-4.8
+    - CXX=g++-4.8
   global:
-    secure: TDs5TaMwtpyQxCL0p4hS11kMWkfkr56L2upWWI2mqLO7pxqsAIsSZH9HYX630O8wtOyII5VSjp0HOVA8+qe4WbTngU+50fY4on+it978aUajkgA4KTw4Kwn8MCIybS3YhOPuQjI5WbdmhrA9CJNrnuRHP5mZJ/gMdy48EBrK+0Vm8PzSsik9oLc4Zg3Z2rg4vq+DE7kB0Oz2XQ8emFlvpnfOfsTZbUVDa+lMzQFIGifzAdY6j2GZfXJA/dARG260CtT6vmbWHPS2au3IvVSGz6x1PO7lvsFvx9Qd+LZ9TvAvQNKbaXtA7I5Wb44JnLV+RFN1ykJ7OxKv5CKm3KJJ9AUwPlBVRWLHbz+Zji6HOqfLEaYIAwK07ewT198plcx3WK3hbz37aXgziDP4/MTrQ+Zo9IV9UTmcEd40H8WnQFSBRb7s2yMb6SAFuAQ6LM0NIJnJ+DJb5ZwpJRUydO1rl4ev5+SCtLX5BUziNp4VIv56NPmyNRPbhFDlcm7S9atI7LAciRCEudB3mBKhKAXEjDMx1YqXKSR6nKl4gaEvSy93CiMu/XgvanY5Wi5co4vAK686EYCxpsc1j9yXZTt1bKOQG+TyOY3z/6kqjtFEDf9tnwNtytUzyabTNlWu2NmFne4cLZQqOn/R+NvfHkawQwPxAE72rsLkedSlv2YGzwo=
+    secure: >-
+      TDs5TaMwtpyQxCL0p4hS11kMWkfkr56L2upWWI2mqLO7pxqsAIsSZH9HYX630O8wtOyII5VSjp0HOVA8+qe4WbTngU+50fY4on+it978aUajkgA4KTw4Kwn8MCIybS3YhOPuQjI5WbdmhrA9CJNrnuRHP5mZJ/gMdy48EBrK+0Vm8PzSsik9oLc4Zg3Z2rg4vq+DE7kB0Oz2XQ8emFlvpnfOfsTZbUVDa+lMzQFIGifzAdY6j2GZfXJA/dARG260CtT6vmbWHPS2au3IvVSGz6x1PO7lvsFvx9Qd+LZ9TvAvQNKbaXtA7I5Wb44JnLV+RFN1ykJ7OxKv5CKm3KJJ9AUwPlBVRWLHbz+Zji6HOqfLEaYIAwK07ewT198plcx3WK3hbz37aXgziDP4/MTrQ+Zo9IV9UTmcEd40H8WnQFSBRb7s2yMb6SAFuAQ6LM0NIJnJ+DJb5ZwpJRUydO1rl4ev5+SCtLX5BUziNp4VIv56NPmyNRPbhFDlcm7S9atI7LAciRCEudB3mBKhKAXEjDMx1YqXKSR6nKl4gaEvSy93CiMu/XgvanY5Wi5co4vAK686EYCxpsc1j9yXZTt1bKOQG+TyOY3z/6kqjtFEDf9tnwNtytUzyabTNlWu2NmFne4cLZQqOn/R+NvfHkawQwPxAE72rsLkedSlv2YGzwo=
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - g++-4.8
+      - g++-4.8
 before_install:
-- echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  - 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc'
 install:
-- npm install
-- pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm install; popd
+  - npm install
+  - pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm install; popd
 script:
-- npm test
-- pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm test; popd
+  - npm test
+  - pushd ./node_modules/@octoblu/nanocyte-engine-simple; npm test; popd
 branches:
   only:
-  - "/^v[0-9]/"
+    - '/^v[0-9]/'
 after_success:
-- npm run coverage
-- npm run mocha:json
-- bash <(curl -s https://codecov.io/bash)
-- bash <(curl -s https://codecov.octoblu.com/bash)
+  - npm run coverage
+  - 'npm run mocha:json'
+  - 'bash <(curl -s https://codecov.io/bash)'
+  - 'bash <(curl -s https://codecov.octoblu.com/bash)'
+notifications:
+  webhooks: 'https://deploy-state.octoblu.com/deployments/travis-ci/pro'
