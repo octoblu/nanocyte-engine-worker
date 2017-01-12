@@ -77,11 +77,17 @@ class Command
       setInterval =>
         mongo.runCommand {ping: 1}, (error) =>
           @die error if error?
-      , 10 * 1000
+      , 30 * 1000
 
       datastore = mongo.instances
 
       client = new RedisNS @namespace, redis.createClient(@redisUri, dropBufferSupport: true)
+
+      setInterval =>
+        client.ping (error) =>
+          @die error if error?
+      , 30 * 1000
+
       jobLogClient = redis.createClient @jobLogRedisUri, dropBufferSupport: true
       jobLogger = new JobLogger
         client: jobLogClient
