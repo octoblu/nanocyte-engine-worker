@@ -4,7 +4,7 @@ debug            = require('debug')('nanocyte-engine-worker:queue-worker')
 
 class QueueWorker
   constructor: (options) ->
-    {@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger,@dispatchLogger,@Engine} = options
+    {@client,@timeout,@engineTimeout,@requestQueueName,@memoryLimit,@jobLogger,@dispatchLogger,@Engine,@engineLogger} = options
     {cache, datastore} = options
     throw new Error 'cache is required' unless cache?
     throw new Error 'datastore is required' unless datastore?
@@ -21,7 +21,7 @@ class QueueWorker
           console.error "exiting with rss beyond limit at: #{rss}"
           process.exit 1
 
-      @client.brpop @requestQueueName, @timeout, (error,result) =>
+      @client.brpop @requestQueueName, @timeout, (error, result) =>
         return callback error if error?
         return callback() unless result?
 
@@ -36,11 +36,13 @@ class QueueWorker
             @precacheJob request, (error) =>
               return callback error if error?
 
-              @processJob request, (error) =>
+              @processJob request, (error, data={}) =>
                 code = 200
                 code = 500 if error?
+                { maxMessageCount } = data
                 request = metadata: {toUuid: request.metadata.flowId}
                 response = metadata: {code}
+                response.lagTime = maxMessageCount
 
                 @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
                   return callback jobLoggerError if jobLoggerError?
@@ -55,7 +57,6 @@ class QueueWorker
 
     {flowId, instanceId} = metadata
     @flowSynchronizer.clearByFlowIdAndInstanceId flowId, instanceId, callback
-
 
   isDeleteCacheMessage: ({metadata, message}) =>
     return true if message?.payload?.from == 'engine-start'
