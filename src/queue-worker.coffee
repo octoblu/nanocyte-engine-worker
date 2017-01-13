@@ -75,11 +75,11 @@ class QueueWorker
 
     engine = new @Engine timeoutSeconds: @engineTimeout
 
-    engine.run request, (error) =>
+    engine.run request, (error, data={}) =>
       debug "the worker thought we had an error", benchmark.toString() if error?
       debug "the worker noticed we ended", benchmark.toString()
       error.flowId = request.metadata?.flowId if error?
 
-      callback error
+      callback error, data
 
 module.exports = QueueWorker
