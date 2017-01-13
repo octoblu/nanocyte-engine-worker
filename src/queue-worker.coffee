@@ -41,8 +41,7 @@ class QueueWorker
                 code = 500 if error?
                 { maxMessageCount } = data
                 request = metadata: {toUuid: request.metadata.flowId}
-                response = metadata: {code}
-                response.lagTime = maxMessageCount
+                response = metadata: {code, maxMessageCount}
 
                 @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
                   return callback jobLoggerError if jobLoggerError?
