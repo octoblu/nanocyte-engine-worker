@@ -1,6 +1,6 @@
 {
   "name": "nanocyte-engine-worker",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "description": "Nanocyte Engine queue worker",
   "homepage": "https://github.com/octoblu/nanocyte-engine-worker#readme",
   "bugs": {
