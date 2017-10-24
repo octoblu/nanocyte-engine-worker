@@ -49,6 +49,10 @@ class Command
     if process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT?
       @memoryLimit = process.env.NANOCYTE_ENGINE_REQUEST_MEMORY_LIMIT
 
+    process.env.JOB_LOG_REDIS_URI ?= process.env.REDIS_URI
+    process.env.JOB_LOG_QUEUE ?= 'sample-rate:1.00'
+    process.env.JOB_LOG_SAMPLE_RATE ?= 0
+
     throw new Error('env: JOB_LOG_REDIS_URI is required') unless process.env.JOB_LOG_REDIS_URI?
     @jobLogRedisUri = process.env.JOB_LOG_REDIS_URI
     throw new Error('env: JOB_LOG_QUEUE is required') unless process.env.JOB_LOG_QUEUE?
